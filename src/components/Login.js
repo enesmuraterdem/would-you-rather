@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getUsers } from '../store/actions/users';
-import { setAuthUser } from '../store/actions/auth';
+import { loginUser } from '../store/actions/auth';
 import {
     Box,
     FormControl,
@@ -27,8 +27,7 @@ const Login = () => {
     }
 
     const handleClick = () => {
-        console.log(userId)
-        dispatch(setAuthUser(userId))
+        dispatch(loginUser(userId))
     }
 
     return (

@@ -5,7 +5,7 @@ const initialState = null;
 const auth = (state = initialState, { type, payload }) => {
     switch (type) {
         case UPDATE_AUTH_USER:
-            return payload;
+            return payload.id;
     }
     return state;
 }

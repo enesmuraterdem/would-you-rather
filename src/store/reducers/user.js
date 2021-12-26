@@ -1,8 +1,8 @@
-import { UPDATE_USERS } from '../actions/users';
+import { UPDATE_USERS } from '../actions/user';
 
 const initialState = [];
 
-const users = (state = initialState, { type, payload }) => {
+const user = (state = initialState, { type, payload }) => {
     switch (type) {
         case UPDATE_USERS:
             return payload.users;
@@ -10,4 +10,4 @@ const users = (state = initialState, { type, payload }) => {
     return state;
 }
 
-export default users;
+export default user;
