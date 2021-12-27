@@ -1,73 +1,82 @@
 import React, { Fragment, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { getUsers } from '../store/actions/users';
 import { loginUser } from '../store/actions/auth';
-import {
-    Box,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
-    Button,
-} from '@mui/material';
+import { Row, Col, Image, Card, Select, Avatar, Button } from 'antd';
 
 const Login = () => {
+    const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { users } = useSelector(state => ({
-        users: state.users
+    const { users } = useSelector(({ users }) => ({
+        users
     }));
-    const [userId, setUserId] = useState("");
+    const [userId, setUserId] = useState(null);
 
     useEffect(() => {
         dispatch(getUsers());
     }, [])
 
-    const handleUserSelect = e => {
-        setUserId(e.target.value)
+    const handleUserSelect = value => {
+        setUserId(value)
     }
 
     const handleClick = () => {
-        dispatch(loginUser(userId))
+        dispatch(loginUser(userId, navigate))
     }
 
     return (
-        <Fragment>
-            <Box
-                sx={{
-                    marginTop: 8,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                }}
-            >
-                <img style={{ maxWidth: 200 }} src="./images/wouldYouRather.png" />
-                <FormControl sx={{ mt:6 }} fullWidth>
-                    <InputLabel id="user-id">Select User</InputLabel>
-                    <Select
-                        labelId="user-id"
-                        autoFocus
-                        onChange={handleUserSelect}
-                        value={userId}
-                        label="Select User"
-                    >
-                        <MenuItem value="">None</MenuItem>
-                        {
-                            Object.keys(users).map(key => (
-                                <MenuItem key={key} value={users[key].id}>{ users[key].name }</MenuItem>
-                            ))
-                        }
-                    </Select>
-                </FormControl>
-                <Button
-                    fullWidth
-                    variant="contained"
-                    sx={{ mt: 3, mb: 2 }}
-                    onClick={() => handleClick()}
-                >
-                    Login
-                </Button>
-            </Box>
-        </Fragment>
+        <Row justify="center" align="middle" style={{ height: '100%' }}>
+            <Col flex="320px">
+                <Card title="Welcome to the Would You Rather?">
+                    <Row>
+                        <Col span={24} align="middle" style={{ marginBottom: 24 }}>
+                            <Image
+                                width={ 150 }
+                                src="/images/wouldYouRather.png"
+                                preview={false}
+                            />
+                        </Col>
+                        <Col span={24} style={{ marginBottom: 8 }}>
+                            <Select
+                                style={{ width: '100%' }}
+                                placeholder="Select user.."
+                                value={userId}
+                                onChange={handleUserSelect}
+                            >
+                                {
+                                    Object
+                                    .keys(users)
+                                    .map(key => (
+                                        <Select.Option
+                                            key={key}
+                                            value={users[key].id}
+                                        >
+                                            <Avatar
+                                                alt={users[key].name}
+                                                src={users[key].avatarURL}
+                                                style={{ marginRight: 10 }}
+                                                size="small"
+                                            />
+                                            { users[key].name }
+                                        </Select.Option>
+                                    ))
+                                }
+                            </Select>
+                        </Col>
+                        <Col span={24} align="middle">
+                            <Button
+                                block
+                                onClick={() => handleClick()}
+                                disabled={!userId}
+                            >
+                                Login
+                            </Button>
+                        </Col>
+                    </Row>
+                </Card>
+            </Col>
+        </Row>
     )
 }
 

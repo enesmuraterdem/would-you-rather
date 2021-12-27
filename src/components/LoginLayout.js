@@ -1,10 +1,10 @@
-import { Container, Grid } from '@mui/material';
+import { Layout } from 'antd';
 
 const LoginLayout = ({ children }) => {
     return (
-        <Container component="main" maxWidth="xs">
+        <Layout.Content style={{ height: '100vh' }}>
             { children }
-        </Container>
+        </Layout.Content>
     )
 }
 

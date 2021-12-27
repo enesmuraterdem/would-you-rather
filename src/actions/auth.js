@@ -1,1 +1,0 @@
-export const UPDATE_AUTH_USER = 'UPDATE_AUTH_USER';

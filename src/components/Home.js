@@ -1,44 +1,19 @@
 import React, { useEffect, useState} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useTheme } from '@mui/material/styles';
-import PropTypes from 'prop-types';
-import {
-    Tabs,
-    Tab,
-    Box,
-    Typography,
-    AppBar
-} from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { Tabs, Card, Row } from 'antd';
 import { getQuestions } from '../store/actions/questions';
 import QuestionCard from './QuestionCard';
 
-const TabPanel = (props) => {
-    const { children, value, index, ...other } = props;
-  
-    return (
-      <div
-        role="tabpanel"
-        hidden={value !== index}
-        id={`full-width-tabpanel-${index}`}
-        aria-labelledby={`full-width-tab-${index}`}
-        {...other}
-      >
-        {value === index && (
-          <Box sx={{ p: 3 }}>
-            { children }
-          </Box>
-        )}
-      </div>
-    );
-}
-
 const Home = props => {
     const dispatch = useDispatch();
-    const { questions, auth } = useSelector(({ questions, auth}) => ({
+    const navigate = useNavigate();
+    const { questions, users, authUser } = useSelector(({ questions, auth, users }) => ({
        questions,
-       auth,
+       authUser: users[auth],
+       users
     }));
-    const [ panel, setPanel ] = useState(0)
+    const [ panel, setPanel ] = useState('Unanswered')
 
     useEffect(() => {
         dispatch(getQuestions());
@@ -51,29 +26,92 @@ const Home = props => {
         };
     }
 
-    const handleChange = (event, newValue) => {
-        setPanel(newValue);
+    const handleChange = (key) => {
+        setPanel(key);
     };
 
-    const handleClickAnswer = (event) => {
-        
+    const handleClickAnswer = (questionId) => {
+        console.log('questionId', questionId)
+        navigate(`/question/${questionId}`)
+    };
+
+    const panelContentList = {
+        Unanswered: Object
+                        .keys(questions)
+                        .filter(key => !authUser?.answers[key])
+                        .sort((firstKey, secondKey) => questions[secondKey].timestamp - questions[firstKey].timestamp)
+                        .map(key => (
+                            <QuestionCard
+                                isAnswered={false}
+                                key={key}
+                                id={key}
+                                author={users[questions[key].author]}
+                                optionOne={questions[key].optionOne}
+                                optionTwo={questions[key].optionTwo}
+                                onClickAnswer={() => handleClickAnswer(key)}
+                            />
+                        )),
+        Answered: Object
+                    .keys(questions)
+                    .filter(key => authUser?.answers[key])
+                    .sort((firstKey, secondKey) => questions[secondKey].timestamp - questions[firstKey].timestamp)
+                    .map(key => (
+                        <QuestionCard
+                            isAnswered={true}
+                            key={key}
+                            id={key}
+                            author={users[questions[key].author]}
+                            optionOne={questions[key].optionOne}
+                            optionTwo={questions[key].optionTwo}
+                            onClickAnswer={() => handleClickAnswer(key)}
+                        />
+                    )),
     };
 
     return (
-        <Box sx={{ width: '100%' }}>
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                <Tabs value={panel} variant="fullWidth" onChange={handleChange} aria-label="basic tabs example" centered>
-                    <Tab label="Unanswered" {...a11yProps(0)} />
-                    <Tab label="Answered" {...a11yProps(1)} />
-                </Tabs>
-            </Box>
-            <TabPanel value={panel} index={0}>
+        <Row justify="center" style={{ paddingTop: 0 }}>
+            <Card
+                tabList={[
+                    {
+                      key: 'Unanswered',
+                      tab: 'Unanswered',
+                    },
+                    {
+                      key: 'Answered',
+                      tab: 'Answered',
+                    },
+                ]}
+                tabProps={{
+                    centered: true
+                }}
+                activeTabKey={panel}
+                onTabChange={handleChange}
+            >
+                {
+                    panelContentList[panel]
+                }
+            </Card>
+        </Row>
+        
+
+    )
+/*
+    return (
+        <div sx={{ width: '100%' }}>
+            <div sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                <div value={panel} variant="fullWidth" onChange={handleChange} aria-label="basic tabs example" centered>
+                    <div label="Unanswered" {...a11yProps(0)} />
+                    <div label="Answered" {...a11yProps(1)} />
+                </div>
+            </div>
+            <div value={panel} index={0}>
                 {
                     Object
                     .keys(questions)
-                    .filter(key => !auth.answers[key])
+                    .filter(key => !authUser?.answers[key])
                     .map(key => (
                         <QuestionCard
+                            isAnswered={false}
                             key={key}
                             id={key}
                             author={questions[key].author}
@@ -83,14 +121,15 @@ const Home = props => {
                         />
                     ))
                 }
-            </TabPanel>
-            <TabPanel value={panel} index={1}>
+            </div>
+            <div value={panel} index={1}>
                 {
                         Object
                         .keys(questions)
-                        .filter(key => auth.answers[key])
+                        .filter(key => authUser?.answers[key])
                         .map(key => (
                             <QuestionCard
+                                isAnswered={true}
                                 key={key}
                                 id={key}
                                 author={questions[key].author}
@@ -100,8 +139,10 @@ const Home = props => {
                             />
                         ))
                     }
-            </TabPanel>
-        </Box>
+            </div>
+        </div>
     );
-  }
+*/
+}
+
 export default Home;

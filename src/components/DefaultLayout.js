@@ -1,67 +1,67 @@
 import React, { Fragment } from 'react';
-import {
-    Container,
-    Grid,
-    AppBar,
-    Toolbar,
-    Typography,
-    Box,
-    Button
-} from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { Layout, Menu, Button, Avatar, Row, Col } from 'antd';
 import { setAuthUser } from '../store/actions/auth';
-
 
 const DefaultLayout = ({ children }) => {
     const dispatch = useDispatch();
-    const pages = [
-        {
-            path: '/',
-            name: 'Home'
-        },
-        {
-            path: '/create-pool',
-            name: 'New Pool'
-        },
-        {
-            path: '/leaderboard',
-            name: 'Leaderboard'
-        },
-    ]
+    const location = useLocation();
+    const { authUser } = useSelector(({ auth, users }) => ({
+        authUser: users[auth],
+     }));
+    const pages = {
+        '/': 'Home',
+        '/add': 'New Poll',
+        '/leaderboard': 'Leaderboard'
+    }
 
     const handleLogout = () => {
         dispatch(setAuthUser(null))
     }
 
     return (
-        <Fragment>
-            <AppBar position="static">
-                <Toolbar>
-                    <Box sx={{ flexGrow: 1, display: { xs: 'flex' } }}>
-                        {pages.map((page, index) => (
-                        <Button
-                            component={Link}
-                            to={page.path}
-                            key={`${page.name}-${index}`}
-                            sx={{ my: 2, color: 'white', display: 'block' }}
+        <Layout style={{ height: '100%'}}>
+            <Layout.Header style={{ position: 'fixed', zIndex: 1, width: '100%', backgroundColor: 'white' }}>
+                <Row>
+                    <Col flex="auto">
+                        <Menu
+                            mode="horizontal"
+                            style={{ flex: '50%' }}
+                            selectedKeys={ location.pathname }
                         >
-                            {page.name}
+                            {
+                                Object.keys(pages).map((path) => (
+                                    <Menu.Item key={path}>
+                                        <Link to={path}>{pages[path]}</Link>
+                                    </Menu.Item>
+                                ))
+                            }
+                        </Menu>
+                    </Col>
+                    <Col style={{ margin: '0 20px' }}>
+                        <Avatar
+                            alt={authUser.name}
+                            src={authUser.avatarURL}
+                            style={{ marginRight: 10 }}
+                            size="small"
+                        />
+                        <span style={{ color: '#333' }}>{ authUser.name }</span>
+                    </Col>
+                    <Col>
+                        <Button
+                            style={{ marginLeft: 'auto' }}
+                            onClick={handleLogout}
+                        >
+                            Logout
                         </Button>
-                        ))}
-                    </Box>
-                    <Button
-                        onClick={handleLogout}
-                        sx={{ color: 'white' }}
-                    >
-                        Logout
-                    </Button>
-                </Toolbar>
-            </AppBar>
-            <Container component="main" maxWidth="xs" sx={{ mt: 6 }}>
+                    </Col>
+                </Row>
+            </Layout.Header>
+            <Layout.Content style={{ marginTop: 60, padding: '32px 0' }}>
                 { children }
-            </Container>
-        </Fragment>
+            </Layout.Content>
+        </Layout>
     )
 }
 
