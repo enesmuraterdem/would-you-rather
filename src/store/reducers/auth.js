@@ -6,8 +6,9 @@ const auth = (state = initialState, { type, payload }) => {
     switch (type) {
         case UPDATE_AUTH_USER:
             return payload;
+        default:
+            return state;
     }
-    return state;
 }
 
 export default auth;

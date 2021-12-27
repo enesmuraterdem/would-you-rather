@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Card, Button, Divider, Row, Col, Input } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import { addNewQuestion } from '../store/actions/questions';
@@ -35,7 +35,7 @@ const CreatePool = () => {
 
     return (
         <Row justify="center" style={{ paddingTop: 0 }}>
-            <Card title="Create poll" >
+            <Card title="Would you Rather?" >
                 <Input
                     placeholder={"Enter option one..."}
                     onChange={(e) => handleChange('optionOneText', e.target.value)}

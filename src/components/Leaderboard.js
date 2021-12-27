@@ -1,10 +1,7 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React from 'react';
 import {
     Card,
     Avatar,
-    Button,
-    Divider,
     Row,
     Col,
     Badge
@@ -12,7 +9,7 @@ import {
 import {
     TrophyOutlined,
   } from '@ant-design/icons';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 const Leaderboard = () => {
     const { users } = useSelector(({ users }) => ({
@@ -42,11 +39,7 @@ const Leaderboard = () => {
             <Col>
             {
                 Object.keys(users)
-                .sort((firstKey, secondKey) => {
-                    const firstUserPoint = getUserPoint(users[firstKey]);
-                    const secondUserPoint = getUserPoint(users[secondKey]);
-                    return getUserPoint(users[secondKey]) - getUserPoint(users[firstKey])
-                })
+                .sort((firstKey, secondKey) => getUserPoint(users[secondKey]) - getUserPoint(users[firstKey]))
                 .map((key, index) => {
                     const user = users[key];
                     return (

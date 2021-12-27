@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LoginLayout from './LoginLayout';
 import DefaultLayout from './DefaultLayout';
@@ -9,26 +9,74 @@ import NewPoll from './NewPoll';
 import Leaderboard from './Leaderboard';
 import NoMatch from './NoMatch';
 
-const App = () => {
+const RequiredAuth = ({ children }) => {
   const authUser = useSelector(state => state.auth);
 
+  if(!authUser) {
+    return (
+      <LoginLayout>
+        <Login />
+      </LoginLayout>
+    )
+  }
+
+  return children
+}
+
+const App = () => {
   return (
       <Router>
-        {
-            !authUser
-              ? <Routes>
-                  <Route path="*" element={ <LoginLayout><Login /></LoginLayout> } />
-                </Routes>
-              : <Routes>
-                  <Route exact path="/" element={ <DefaultLayout><Home /></DefaultLayout>} />
-                  <Route path="/question">
-                    <Route path=":question_id" element={<DefaultLayout><Question /></DefaultLayout>} />
-                  </Route>
-                  <Route path="/add" element={ <DefaultLayout><NewPoll /></DefaultLayout>} />
-                  <Route path="/leaderboard" element={ <DefaultLayout><Leaderboard /></DefaultLayout>} />
-                  <Route path="*" element={ <DefaultLayout><NoMatch /></DefaultLayout>} />
-                </Routes>
-        }
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <RequiredAuth>
+                <DefaultLayout>
+                  <Home />
+                </DefaultLayout>
+              </RequiredAuth>
+            }
+          />
+          <Route path="/questions">
+            <Route path="bad_id" element={ <NoMatch /> }/>
+            <Route
+              path=":question_id"
+              element={
+              <RequiredAuth>
+                <DefaultLayout>
+                  <Question />
+                </DefaultLayout>
+              </RequiredAuth>
+            }
+          />
+          </Route>
+          <Route
+            path="/add"
+            element={ 
+              <RequiredAuth>
+                <DefaultLayout>
+                  <NewPoll />
+                </DefaultLayout>
+              </RequiredAuth>
+            }
+          />
+          <Route
+            path="/leaderboard"
+            element={ 
+              <RequiredAuth>
+                <DefaultLayout>
+                  <Leaderboard />
+                </DefaultLayout>
+              </RequiredAuth>
+            }
+          />
+          <Route
+            path="*"
+            element={
+              <NoMatch />
+            }
+          />
+        </Routes>
       </Router>
   );
 }

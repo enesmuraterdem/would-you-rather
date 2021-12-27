@@ -10,7 +10,7 @@ import {
     Progress,
     Badge
 } from 'antd';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { answerToQuestion } from '../store/actions/questions';
 
@@ -130,7 +130,7 @@ const Question = () => {
     const { question_id } = useParams();
     const dispatch = useDispatch();
     const { authUser, users, question } = useSelector(({ questions, auth, users }) => ({
-        question: questions[question_id] || {},
+        question: questions[question_id],
         authUser: users[auth] || {},
         users
     }));
@@ -147,6 +147,13 @@ const Question = () => {
 
     const handleChange = (e) => {
         setAnswer(e.target.value);
+    }
+
+
+    if(!question) {
+        return (
+            <Navigate to="/questions/bad_id" />
+        )
     }
 
     const author = question.author ? users[question.author] || {} : {};

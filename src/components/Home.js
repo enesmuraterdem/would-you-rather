@@ -1,11 +1,11 @@
 import React, { useEffect, useState} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Tabs, Card, Row } from 'antd';
+import { Card, Row } from 'antd';
 import { getQuestions } from '../store/actions/questions';
 import QuestionCard from './QuestionCard';
 
-const Home = props => {
+const Home = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { questions, users, authUser } = useSelector(({ questions, auth, users }) => ({
@@ -17,22 +17,14 @@ const Home = props => {
 
     useEffect(() => {
         dispatch(getQuestions());
-    }, [])
-
-    function a11yProps(index) {
-        return {
-          id: `simple-tab-${index}`,
-          'aria-controls': `simple-tabpanel-${index}`,
-        };
-    }
+    }, [ dispatch ])
 
     const handleChange = (key) => {
         setPanel(key);
     };
 
     const handleClickAnswer = (questionId) => {
-        console.log('questionId', questionId)
-        navigate(`/question/${questionId}`)
+        navigate(`/questions/${questionId}`)
     };
 
     const panelContentList = {
@@ -95,54 +87,6 @@ const Home = props => {
         
 
     )
-/*
-    return (
-        <div sx={{ width: '100%' }}>
-            <div sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                <div value={panel} variant="fullWidth" onChange={handleChange} aria-label="basic tabs example" centered>
-                    <div label="Unanswered" {...a11yProps(0)} />
-                    <div label="Answered" {...a11yProps(1)} />
-                </div>
-            </div>
-            <div value={panel} index={0}>
-                {
-                    Object
-                    .keys(questions)
-                    .filter(key => !authUser?.answers[key])
-                    .map(key => (
-                        <QuestionCard
-                            isAnswered={false}
-                            key={key}
-                            id={key}
-                            author={questions[key].author}
-                            optionOne={questions[key].optionOne}
-                            optionTwo={questions[key].optionTwo}
-                            onClickAnswer={() => handleClickAnswer(key)}
-                        />
-                    ))
-                }
-            </div>
-            <div value={panel} index={1}>
-                {
-                        Object
-                        .keys(questions)
-                        .filter(key => authUser?.answers[key])
-                        .map(key => (
-                            <QuestionCard
-                                isAnswered={true}
-                                key={key}
-                                id={key}
-                                author={questions[key].author}
-                                optionOne={questions[key].optionOne}
-                                optionTwo={questions[key].optionTwo}
-                                onClickAnswer={() => handleClickAnswer(key)}
-                            />
-                        ))
-                    }
-            </div>
-        </div>
-    );
-*/
 }
 
 export default Home;

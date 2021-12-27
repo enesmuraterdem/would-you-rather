@@ -5,7 +5,6 @@ export const setAuthUser = payload =>  ({
     payload
 })
 
-export const loginUser = (userId, navigate) => dispatch => {
+export const loginUser = userId => dispatch => {
     dispatch(setAuthUser(userId));
-    navigate('/')
 } 
